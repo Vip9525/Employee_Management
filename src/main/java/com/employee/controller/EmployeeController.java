@@ -1,32 +1,46 @@
 package com.employee.controller;
 
-import com.employee.dto.Employee;
+import com.employee.dto.EmployeeDto;
+import com.employee.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping("/api/employee")
+@CrossOrigin("*")
 public class EmployeeController {
 
-    List<Employee> listEmp=new ArrayList<Employee>();
+    @Autowired
+    private EmployeeService employeeService;
+
 
     @PostMapping
-    void createEmployee(@RequestBody Employee emp){
-        listEmp.add(emp);
+    void createEmployee(@RequestBody EmployeeDto emp){
+        EmployeeDto empDto=  employeeService.addEmployee(emp);
     }
 
     @GetMapping
-    List<Employee> getAllEmployee(){
-        return listEmp;
+    List<EmployeeDto> getAllEmployee(){
+        return employeeService.getAllEmployee();
     }
 
     @GetMapping("/{empId}")
-    Employee getEmployee(@PathVariable("empId") Integer empId){
-       return listEmp.stream().filter(emp->emp.getEmpId().equals(empId)).toList().get(0);
+    EmployeeDto getEmployee(@PathVariable("empId") String empId){
+       return employeeService.getEmployeeById(empId);
     }
 
+    @PutMapping
+    EmployeeDto updateEmployee(@RequestBody EmployeeDto employeeDto){
+        return employeeService.updateEmployee(employeeDto);
+    }
 
+    @DeleteMapping("/{empId}")
+    Map<String, String> deleteEmployee(@PathVariable("empId") String employeeId){
+        return employeeService.deleteEmployee(employeeId);
+    }
 
 }
